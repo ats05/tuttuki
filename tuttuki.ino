@@ -150,19 +150,22 @@ void runServo(int speedR, int speedL) {
 }
 
 void changeStatus(int num) {
+  if(statusCount < 10) return;
   statusCount = 0;
   status = num;
   runServo(0, 0);
   delay(random(5, 40) * 100);
-}
+} 
 
 void kyoroKyoro() {
   int rnd = random(0, 3);
   for(int i = 0; i < rnd; i++){
-    float spd = random(0,50) - 5;
+    float spd = random(0,50) - 25;
 
     runServo(spd, -spd);
-    delay(random(5, 8) * 100);
+    delay(random(1, 2) * 100);
+    runServo(0, 0);
+    delay(random(2, 5) * 100);
 
   }
 }
