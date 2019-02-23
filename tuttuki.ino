@@ -60,7 +60,7 @@ void loop() {
 
   // 障害物
   float dist = readDistance(distancePin);
-  if (dist < 25 && dist > 15) {
+  if (dist < 20 && dist > 15) {
     changeStatus(STATUS_BACK);
   }
   // 動くもの
@@ -89,10 +89,11 @@ void loop() {
       break;
     case STATUS_BACK:
       runServo(random(5, 30) * -1, random(5, 10) * -1);
+      delay(200);
       break;
 
     case STATUS_TUTTUKI:
-
+      tuttuki();
       changeStatus(STATUS_BACK);
       
       break;
@@ -133,11 +134,13 @@ void runServo(int speedR, int speedL) {
 }
 
 void changeStatus(int num) {
-  if(statusCount < 10) return;
+//  if(statusCount < 10) return;
   statusCount = 0;
   status = num;
-  runServo(0, 0);
-  delay(random(5, 40) * 100);
+  if(random(0,1)){
+    runServo(0, 0);
+    delay(random(5, 20) * 100);
+  }
 } 
 
 void kyoroKyoro() {
@@ -154,7 +157,7 @@ void kyoroKyoro() {
 }
 
 void tuttuki(){
-  int rnd = random(0, 4);
+  int rnd = random(10, 20);
   for(int i = 0; i < rnd; i++){
     runServo(random(1, 8), random(1, 8));
   }
