@@ -92,26 +92,9 @@ void loop() {
       break;
 
     case STATUS_TUTTUKI:
-      if (statusCount < 20) runServo(random(1, 8), random(1, 8));
-      else {
-        runServo(0, 0);
-        do {
-          delay(random(10, 30) * 100);
-          servo3.write(80);
-          // runServo(10, 0);
-          delay(300);
-          servo3.write(30);
-          // runServo(-10, 0);
-          delay(300);
-          servo3.write(80);
-          // runServo(10, 0);
-          delay(300);
-          servo3.write(30);
-          // runServo(-10, 0);
-        } while (random(0, 4) == 0);
 
-        changeStatus(STATUS_BACK);
-      }
+      changeStatus(STATUS_BACK);
+      
       break;
 
   }
@@ -168,5 +151,30 @@ void kyoroKyoro() {
     delay(random(2, 5) * 100);
 
   }
+}
+
+void tuttuki(){
+  int rnd = random(0, 4);
+  for(int i = 0; i < rnd; i++){
+    runServo(random(1, 8), random(1, 8));
+  }
+  
+  rnd = random(0, 4);
+  runServo(0, 0);
+  for(int i = 0; i < rnd; i++){
+    delay(random(10, 30) * 100);
+    servo3.write(80);
+    // runServo(10, 0);
+    delay(300);
+    servo3.write(30);
+    // runServo(-10, 0);
+    delay(300);
+    servo3.write(80);
+    // runServo(10, 0);
+    delay(300);
+    servo3.write(30);
+    // runServo(-10, 0);
+  }
+
 }
 
