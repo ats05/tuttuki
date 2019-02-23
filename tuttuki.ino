@@ -1,7 +1,9 @@
 #include <Servo.h>
 
-#define STAUTS_STOP       0
+#define STATUS_STOP       0
 #define STATUS_FORWORD    100
+#define STATUS_RIGHT      101
+#define STATUS_LEFT       102
 #define STATUS_BACK       200
 #define STATUS_BACK_RIGHT 201
 #define STATUS_BACK_LEFT  202
@@ -18,61 +20,70 @@ int rotate = 0;
 // 進行方向を右とか左とかランダムにする
 int directionOffset = 0;
 const int distancePin = A0;
-const float Vcc = 3.5; 
+const float Vcc = 3.5;
 
 void setup() {
- 
+
   Serial.begin(9600);
 
 
   servoL.attach(5);
   servoR.attach(3);
 
-  
+
   servo3.attach(8);
   servo3.write(30);
 
-//  servoL.write(90);
-//  servoR.write(90);
+  //  servoL.write(90);
+  //  servoR.write(90);
 
-  
+
 }
 
 /**
- * pin ピン番号
- * return センチメートル
- */
-int readDistance(int pin){
-  float dist = Vcc * analogRead(pin) / 1023;  
-  dist = 26.549 * pow(dist, -1.2091); 
+   pin ピン番号
+   return センチメートル
+*/
+int readDistance(int pin) {
+  float dist = Vcc * analogRead(pin) / 1023;
+  dist = 26.549 * pow(dist, -1.2091);
   Serial.print(status);
+  Serial.print(" ");
+  Serial.print(statusCount);
   Serial.print(" ");
   Serial.print(dist);
   Serial.print("\n");
   return dist;
 }
 
-void loop() {  
+void loop() {
 
   // 障害物
   float dist = readDistance(distancePin);
-  if(dist < 25 && dist > 15) {
-    changeStatus(STATUS_BACK); 
+  if (dist < 25 && dist > 15) {
+    changeStatus(STATUS_BACK);
   }
   // 動くもの
-  else if(dist< 15 && dist > 5) {
-    if(status != STATUS_TUTTUKI) changeStatus(STATUS_TUTTUKI); 
+  else if (dist < 15 && dist > 5) {
+    if (status != STATUS_TUTTUKI) changeStatus(STATUS_TUTTUKI);
   }
-  else{
-    if(status != STATUS_FORWORD) changeStatus(STATUS_FORWORD);
-    
+  else {
+    if (status != STATUS_FORWORD){
+      // きょろきょろ
+      kyoroKyoro();
+      changeStatus(STATUS_FORWORD);
+    }
+
   }
 
-
-  switch(status){
+  float r = 10;
+  float l = 10;
+  switch (status) {
     case STATUS_FORWORD:
+
+
       runServo(10, 10);
-      if(statusCount > 80 and random(0,1)) {
+      if (statusCount > 80 and random(0, 1)) {
         changeStatus(STATUS_FORWORD);
       }
       break;
@@ -81,10 +92,10 @@ void loop() {
       break;
 
     case STATUS_TUTTUKI:
-      if(statusCount < 40) runServo(random(1, 8), random(1, 8));
+      if (statusCount < 20) runServo(random(1, 8), random(1, 8));
       else {
         runServo(0, 0);
-        do{
+        do {
           delay(random(10, 30) * 100);
           servo3.write(80);
           // runServo(10, 0);
@@ -97,57 +108,62 @@ void loop() {
           delay(300);
           servo3.write(30);
           // runServo(-10, 0);
-        }while(random(0,2) == 0);
+        } while (random(0, 4) == 0);
 
         changeStatus(STATUS_BACK);
       }
       break;
-      
+
   }
-  
-  
+
+
   statusCount++;
 }
 
 /**
- * speedR: integer -100~100
- * speedL: integer -100~100
- */
-void runServo(int speedR, int speedL){
+   speedR: integer -100~100
+   speedL: integer -100~100
+*/
+void runServo(int speedR, int speedL) {
 
   // 確実に止める
-  if(speedR == 0 && speedL == 0){
-    servoR.write(93);
-    servoL.write(90);
+  if (speedR == 0 && speedL == 0) {
+    servoR.write(88);
+    servoL.write(95);
     return;
   }
   //TODO: アングルの実装
-  
+
   // 270  →90:180
 
   float r = 90 - ((speedR * 0.01) * 90) + 2;
   float l = 90 + ((speedL * 0.01) * 90);
 
-//  if(directionOffset > 0) r *= directionOffset;
-//  else l *= directionOffset;
-  
-  
+
   // 停止:90 全力前進:0 に制御 . 2:誤差
   servoR.write(r);
 
   // 停止:90 全力前進:180 に制御
   servoL.write(l);
 
-  
+
 }
 
-void changeStatus(int num){
-  if(statusCount < 50) return;
-  // -0.5 ~ 0.5
-  directionOffset = random(0,100) / 0.01 - 50;
+void changeStatus(int num) {
   statusCount = 0;
   status = num;
   runServo(0, 0);
-  delay(random(5, 20) * 100);
+  delay(random(5, 40) * 100);
+}
+
+void kyoroKyoro() {
+  int rnd = random(0, 3);
+  for(int i = 0; i < rnd; i++){
+    float spd = random(0,50) - 5;
+
+    runServo(spd, -spd);
+    delay(random(5, 8) * 100);
+
+  }
 }
 
