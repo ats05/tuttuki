@@ -55,11 +55,12 @@ int readDistance(int pin){
 void loop() {  
 
   // 障害物
-  if(readDistance(distancePin) < 25 && readDistance(distancePin) > 15) {
+  float dist = readDistance(distancePin);
+  if(dist < 25 && dist > 15) {
     changeStatus(STATUS_BACK); 
   }
   // 動くもの
-  else if(readDistance(distancePin) < 15 && readDistance(distancePin) > 5) {
+  else if(dist< 15 && dist > 5) {
     if(status != STATUS_TUTTUKI) changeStatus(STATUS_TUTTUKI); 
   }
   else{
