@@ -86,13 +86,13 @@ void loop() {
         runServo(0, 0);
         do{
           delay(random(10, 30) * 100);
-          servo3.write(45);
+          servo3.write(80);
           // runServo(10, 0);
           delay(300);
           servo3.write(30);
           // runServo(-10, 0);
           delay(300);
-          servo3.write(45);
+          servo3.write(80);
           // runServo(10, 0);
           delay(300);
           servo3.write(30);
